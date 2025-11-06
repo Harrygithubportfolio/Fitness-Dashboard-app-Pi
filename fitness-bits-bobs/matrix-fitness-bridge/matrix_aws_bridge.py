@@ -13,7 +13,7 @@ import os
 app = Flask(__name__)
 
 # Configuration
-AWS_WEBHOOK_URL = "https://w6h9nl1gd7.execute-api.eu-west-2.amazonaws.com/prod/ntfy/workout"
+API_URL = os.getenv('PRIVATE_API_URL', 'http://localhost:3001/api/workout')
 MATRIX_URL = "http://localhost:8008"
 MATRIX_TOKEN = None  # We'll get this when needed
 API_KEY = "fitness-bridge-secret-2025"
@@ -76,8 +76,8 @@ def is_workout_message(text):
     workout_pattern = r'\b\w+\s+\d+kg\s+\d+x\d+\b'
     return re.search(workout_pattern, text, re.IGNORECASE) is not None
 
-def send_to_aws_lambda(workout_text):
-    """Forward workout to AWS Lambda and get response"""
+def send_to_local_api(workout_text):
+    """Forward workout to local API and get response"""
     try:
         payload = {
             "message": workout_text,
@@ -85,7 +85,7 @@ def send_to_aws_lambda(workout_text):
         }
         
         response = requests.post(
-            AWS_WEBHOOK_URL, 
+            API_URL,  # Uses the API_URL we set at top of file
             json=payload,
             timeout=10
         )
@@ -94,7 +94,7 @@ def send_to_aws_lambda(workout_text):
             result = response.json()
             return result
         else:
-            return {"error": f"AWS Lambda returned {response.status_code}"}
+            return {"error": f"API returned {response.status_code}"}
             
     except Exception as e:
         return {"error": str(e)}
@@ -118,7 +118,7 @@ def handle_matrix_message(room_id):
             print(f"Detected workout: {message_body}")
             
             # Send to AWS Lambda
-            result = send_to_aws_lambda(message_body)
+            result = send_to_local_api(message_body)
             
             # Create confirmation message
             if result.get('error'):
