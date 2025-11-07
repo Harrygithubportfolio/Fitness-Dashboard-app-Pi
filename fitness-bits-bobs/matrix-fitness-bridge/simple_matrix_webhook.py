@@ -9,7 +9,7 @@ from matrix_client.api import MatrixRequestError
 MATRIX_URL = "http://localhost:8008"
 MATRIX_USERNAME = "@fitness-admin:pi-fitness.local"
 MATRIX_PASSWORD = "Ahoithereshipmaet1996!!"
-ROOM_ID = "!GQJkRdAVRdMEONAepv:matrix.org"  # NEW unencrypted room
+ROOM_ID = "!MEoQAcdsRWNXPFPOZp:pi-fitness.local"  # NEW unencrypted room
 BRIDGE_URL = "http://localhost:5000/matrix-hook"
 API_KEY = "fitness-bridge-secret-2025"
 
